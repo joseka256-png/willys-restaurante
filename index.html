@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Willy's | Restaurante · Menú</title>
+<meta name="description" content="Willy's – comida hecha con cariño desde 2022. Mirá nuestro menú y pedí por WhatsApp.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --naranja:#F26A1B; --naranja-osc:#D4550C; --negro:#141414; --gris:#5b5b5b;
+    --crema:#FFF8F1; --blanco:#fff; --borde:#F1E3D6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Poppins',sans-serif;color:var(--negro);background:var(--crema);line-height:1.6}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  .wrap{width:min(1150px,92%);margin:auto}
+  .script{font-family:'Yellowtail',cursive;font-weight:400}
+
+  /* NAV */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,248,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--borde)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:88px}
+  .nav img{height:72px;width:auto}
+  .nav ul{display:flex;gap:28px;list-style:none;font-weight:500}
+  .nav ul a:hover{color:var(--naranja)}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--naranja);color:#fff;padding:12px 24px;border-radius:50px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-family:inherit;font-size:1rem}
+  .btn:hover{background:var(--naranja-osc);transform:translateY(-2px);box-shadow:0 8px 20px rgba(242,106,27,.35)}
+  .btn.outline{background:transparent;color:var(--negro);border:2px solid var(--negro)}
+  .btn.outline:hover{background:var(--negro);color:#fff;box-shadow:none}
+  .menu-toggle{display:none;background:none;border:none;font-size:1.9rem;cursor:pointer;color:var(--negro);line-height:1}
+
+  /* HERO */
+  .hero{position:relative;overflow:hidden;padding:80px 0 100px}
+  .hero::before{content:"";position:absolute;right:-180px;top:-120px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(242,106,27,.22),transparent 70%)}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;position:relative}
+  .tag{display:inline-block;background:#fff;border:1px solid var(--borde);padding:6px 16px;border-radius:50px;font-size:.85rem;font-weight:600;color:var(--naranja)}
+  .hero-logo{height:150px;width:auto;margin-bottom:18px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.08))}
+  .hero h1{font-size:clamp(2.6rem,6vw,4.4rem);line-height:1.05;margin:18px 0;font-weight:800}
+  .hero h1 .script{color:var(--naranja);font-size:1.15em;display:block}
+  .hero p{color:var(--gris);font-size:1.1rem;max-width:520px;margin-bottom:30px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-img{position:relative}
+  .hero-img .plato{width:100%;border-radius:50%;aspect-ratio:1;object-fit:cover;box-shadow:0 30px 60px rgba(0,0,0,.18);border:10px solid #fff}
+  .badge{position:absolute;white-space:nowrap;background:#fff;border-radius:18px;padding:12px 18px;box-shadow:0 12px 30px rgba(0,0,0,.12);font-weight:600;display:flex;align-items:center;gap:10px;font-size:.92rem}
+  .badge.b1{left:-20px;bottom:40px}.badge.b2{right:-10px;top:30px}
+  .badge span{font-size:1.6rem}
+
+  /* SECCIONES */
+  section{padding:90px 0}
+  .titulo{text-align:center;margin-bottom:46px}
+  .titulo .script{color:var(--naranja);font-size:2rem}
+  .titulo h2{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;line-height:1.1}
+
+  /* MENU */
+  #menu{background:#fff}
+  .tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+  .tab{padding:10px 22px;border-radius:50px;border:2px solid var(--borde);background:var(--crema);font-family:inherit;font-weight:600;cursor:pointer;transition:.2s;font-size:.95rem}
+  .tab.active,.tab:hover{background:var(--negro);color:#fff;border-color:var(--negro)}
+  .grid-menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;align-items:start}
+  .seccion{background:var(--crema);border:1px solid var(--borde);border-radius:22px;padding:24px;animation:fade .4s ease}
+  .seccion-head{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .seccion-head img{width:78px;height:78px;border-radius:16px;object-fit:cover;flex-shrink:0}
+  .seccion h3{display:inline-block;background:var(--naranja);color:#fff;font-weight:800;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;padding:5px 14px;border-radius:8px;transform:rotate(-1.5deg)}
+  .seccion .sub{color:var(--gris);font-size:.85rem;margin:8px 0 4px}
+  .seccion .sub b{color:var(--negro)}
+  .plato-row{padding:12px 0;border-bottom:1px dashed var(--borde)}
+  .plato-row:last-child{border-bottom:none;padding-bottom:0}
+  .plato-row .top{display:flex;align-items:baseline;gap:8px}
+  .plato-row h4{font-size:.98rem;font-weight:700}
+  .plato-row .dots{flex:1;border-bottom:2px dotted #d9c6b4;transform:translateY(-4px)}
+  .plato-row .precio{color:var(--naranja);font-weight:800;white-space:nowrap}
+  .plato-row p{color:var(--gris);font-size:.86rem;margin-top:2px}
+  .plato-row .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:4px}
+  .combo{font-size:.75rem;font-weight:700;background:var(--negro);color:#fff;padding:2px 9px;border-radius:50px}
+  .pedir{font-size:.8rem;font-weight:600;color:var(--negro);border-bottom:2px solid var(--naranja);white-space:nowrap;margin-left:auto}
+  .lista-prot{columns:2;font-size:.86rem;color:var(--gris);margin:6px 0 0 18px}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .nota{text-align:center;color:var(--gris);font-size:.85rem;margin-top:30px}
+
+  /* NOSOTROS */
+  .about{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .about-img{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .about-img img{border-radius:22px;aspect-ratio:3/4;object-fit:cover}
+  .about-img img:nth-child(2){margin-top:50px}
+  .about h2{font-size:2.4rem;font-weight:800;line-height:1.1;margin:8px 0 18px}
+  .about p{color:var(--gris);margin-bottom:16px}
+  .stats{display:flex;gap:34px;margin-top:26px}
+  .stats b{display:block;font-size:2rem;color:var(--naranja);font-weight:800;line-height:1}
+  .stats small{color:var(--gris);font-weight:500}
+
+  /* INFO */
+  #visitanos{background:var(--negro);color:#fff}
+  #visitanos .titulo h2{color:#fff}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .card{background:#1f1f1f;border-radius:22px;padding:32px;border:1px solid #2c2c2c}
+  .card .ic{font-size:2rem;margin-bottom:12px}
+  .card h3{margin-bottom:8px;font-size:1.2rem}
+  .card p,.card li{color:#c9c9c9;font-size:.95rem}
+  .card ul{list-style:none}
+  .card li{display:flex;justify-content:space-between;border-bottom:1px dashed #333;padding:5px 0}
+  .card a.btn{margin-top:16px}
+
+  .pagos{margin-top:28px;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:22px;padding:26px 30px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:space-between}
+  .pagos h3{font-size:1.15rem}
+  .pagos p{color:#c9c9c9;font-size:.9rem}
+  .chips{display:flex;gap:10px;flex-wrap:wrap}
+  .chip{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:50px;padding:10px 18px;font-weight:600;font-size:.92rem;display:flex;gap:8px;align-items:center}
+  .chip.sinpe{background:var(--naranja);border-color:var(--naranja)}
+  .card a.correo{color:#ffb98c;font-weight:600;word-break:break-all}
+  /* CTA */
+  .cta{background:linear-gradient(120deg,var(--naranja),#ff8f3f);color:#fff;border-radius:30px;padding:56px;text-align:center;margin:-40px auto 0;position:relative}
+  .cta h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;line-height:1.1}
+  .cta p{opacity:.92;margin:12px 0 26px}
+  .cta .btn{background:#fff;color:var(--naranja)}
+  .cta .btn:hover{background:var(--negro);color:#fff}
+
+  footer{padding:60px 0 30px;text-align:center}
+  footer img{height:110px;width:auto;margin:0 auto 14px}
+  .social{display:flex;gap:12px;justify-content:center;margin:16px 0}
+  .social a{width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--borde);display:grid;place-items:center;transition:.2s}
+  .social a:hover{background:var(--naranja);color:#fff}
+  footer small{color:var(--gris)}
+
+  .wa-float{position:fixed;right:22px;bottom:22px;width:60px;height:60px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 25px rgba(37,211,102,.45);z-index:60;transition:.2s}
+  .wa-float:hover{transform:scale(1.08)}
+
+
+  /* TARJETA CLIENTE */
+  #tarjeta{background:var(--crema)}
+  .lealtad{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+  .lealtad h3{font-size:1.6rem;font-weight:800;line-height:1.2;margin-bottom:12px}
+  .reglas{list-style:none;margin:18px 0 26px}
+  .reglas li{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;color:var(--gris)}
+  .reglas b{color:var(--negro)}
+  .reglas .n{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--naranja);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+  .vcard{position:relative;border-radius:26px;padding:28px;color:#fff;background:linear-gradient(135deg,#1b1b1b 0%,#2a2a2a 55%,#3a2216 100%);box-shadow:0 30px 60px rgba(0,0,0,.25);overflow:hidden;min-height:320px}
+  .vcard::after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(242,106,27,.55),transparent 70%)}
+  .vcard-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+  .vcard-logo{background:#fff;border-radius:14px;padding:6px 10px}
+  .vcard-logo img{height:46px;width:auto}
+  .vcard small{opacity:.7;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
+  .vcard .nombre{font-size:1.25rem;font-weight:700;margin-top:2px}
+  .sellos{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:26px 0 18px;position:relative;z-index:1}
+  .sello{aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.3);display:grid;place-items:center;font-size:1.3rem;color:rgba(255,255,255,.35);font-weight:700;transition:.3s}
+  .sello.on{background:var(--naranja);border:2px solid var(--naranja);color:#fff;box-shadow:0 0 18px rgba(242,106,27,.6);animation:pop .35s}
+  .sello.premio{border-color:#ffd27a;color:#ffd27a}
+  .sello.premio.on{background:#ffb627;border-color:#ffb627}
+  @keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+  .vcard-bottom{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;gap:10px}
+  .codigo{font-family:monospace;font-size:1.05rem;letter-spacing:.12em}
+  .progreso{font-weight:700;color:#ffb98c}
+  .premio-banner{display:none;margin-top:16px;background:#ffb627;color:#1b1b1b;border-radius:14px;padding:12px 16px;font-weight:700;text-align:center;position:relative;z-index:1}
+  .premio-banner.show{display:block;animation:pop .4s}
+  .acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+  .btn.sm{padding:9px 18px;font-size:.88rem}
+  .btn.dark{background:var(--negro)}
+  .btn.dark:hover{background:#333;box-shadow:none}
+  .link-sm{background:none;border:none;color:var(--gris);font-family:inherit;font-size:.82rem;text-decoration:underline;cursor:pointer}
+  .historial{margin-top:18px;background:#fff;border:1px solid var(--borde);border-radius:16px;padding:14px 18px;max-height:180px;overflow:auto;font-size:.85rem}
+  .historial div{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--borde);color:var(--gris)}
+  .historial div:last-child{border:none}
+  .registro{background:#fff;border:1px solid var(--borde);border-radius:22px;padding:28px}
+  .campo{margin-bottom:14px}
+  .campo label{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
+  .campo input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--borde);font-family:inherit;font-size:1rem;background:var(--crema)}
+  .campo input:focus{outline:none;border-color:var(--naranja)}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;z-index:100;padding:20px}
+  .modal.show{display:grid}
+  .modal-box{background:#fff;border-radius:22px;padding:28px;width:min(420px,100%);animation:pop .3s}
+  .modal-box h3{font-size:1.3rem;margin-bottom:4px}
+  .modal-box p{color:var(--gris);font-size:.9rem;margin-bottom:18px}
+  .msg{font-size:.88rem;font-weight:600;margin:6px 0 12px;min-height:1.2em}
+  .msg.err{color:#d33}.msg.ok{color:#1a9a4b}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(120px);background:var(--negro);color:#fff;padding:14px 22px;border-radius:50px;font-weight:600;z-index:120;transition:.35s;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  @media(max-width:900px){.lealtad{grid-template-columns:1fr}}
+
+  @media(max-width:900px){
+    .hero-grid,.about{grid-template-columns:1fr}
+    .hero{padding:36px 0 70px}
+    .hero-logo{height:110px}
+    .hero-img{max-width:330px;width:85%;margin:30px auto 0}
+    .badge{font-size:.8rem;padding:8px 12px;border-radius:14px}
+    .badge span{font-size:1.2rem}
+    .badge.b1{left:-14px;bottom:18px}
+    .badge.b2{right:-14px;top:14px}
+    .hero-btns .btn{flex:1;justify-content:center;min-width:220px}
+    .cards{grid-template-columns:1fr}
+    .nav ul{position:absolute;top:88px;left:0;right:0;flex-direction:column;background:var(--crema);padding:20px 6%;gap:16px;border-bottom:1px solid var(--borde);display:none}
+    .nav ul.open{display:flex}
+    .menu-toggle{display:block}
+    .nav .btn{display:none}
+    .cta{padding:40px 24px}
+  }
+  @media(max-width:420px){.grid-menu{grid-template-columns:1fr}.seccion{padding:18px}.lista-prot{columns:1}}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav wrap">
+    <a href="#inicio"><img src="logo.png" alt="Willy's"></a>
+    <ul id="links">
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#menu">Menú</a></li>
+      <li><a href="#tarjeta">Tarjeta cliente</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#visitanos">Visítanos</a></li>
+    </ul>
+    <a class="btn" href="#" data-wa="Hola Willy's, quiero hacer un pedido">Pedir ahora</a>
+    <button class="menu-toggle" aria-label="Abrir menú" onclick="document.getElementById('links').classList.toggle('open')">☰</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div>
+      <img class="hero-logo" src="logo.png" alt="Willy's – Since 2022">
+      <span class="tag">🔥 Desde 2022</span>
+      <h1><span class="script">Acá comes</span> como en casa.</h1>
+      <p>Desayunos, almuerzos y antojos hechos al momento, con sabor casero y porciones que llenan. Abierto de 7:00 am a 3:00 pm. Aceptamos tarjeta, SINPE Móvil y efectivo.</p>
+      <div class="hero-btns">
+        <a href="#menu" class="btn">Ver menú →</a>
+        <a href="#" class="btn outline" data-wa="Hola Willy's, quiero hacer un pedido">💬 Pedir por WhatsApp</a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <img class="plato" src="img/almuerzo.jpg" alt="Almuerzo Willy's">
+      <div class="badge b1"><span>🍽️</span> Almuerzo ₡4.500</div>
+      <div class="badge b2"><span>☕</span> Desayunos desde 7 am</div>
+    </div>
+  </div>
+</section>
+
+<!-- MENÚ -->
+<section id="menu">
+  <div class="wrap">
+    <div class="titulo">
+      <span class="script">Nuestro</span>
+      <h2>Menú</h2>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="grid-menu" id="grid"></div>
+    <p class="nota">📦 Empaque para llevar: ₡300 · Precios en colones, sujetos a cambio.</p>
+  </div>
+</section>
+
+
+<!-- TARJETA VIRTUAL DE CLIENTE -->
+<section id="tarjeta">
+  <div class="wrap">
+    <div class="titulo">
+      <span class="script">Cliente frecuente</span>
+      <h2>Tarjeta Willy's</h2>
+    </div>
+    <div class="lealtad">
+      <div>
+        <h3>Completá 10 sellos y te regalamos un <span style="color:var(--naranja)">plato del día gratis</span> 🎁</h3>
+        <ul class="reglas">
+          <li><span class="n">1</span><div><b>Registrate</b> con tu nombre y teléfono. Tu tarjeta queda guardada en tu celular.</div></li>
+          <li><span class="n">2</span><div><b>Cada compra de ₡5 000 o más</b> suma un sello. Al pagar, mostrale tu tarjeta al personal.</div></li>
+          <li><span class="n">3</span><div><b>Al llegar a 10 sellos</b>, canjeás tu plato del día gratis y la tarjeta empieza de nuevo.</div></li>
+        </ul>
+        <div class="registro" id="registro">
+          <div class="campo"><label for="rNombre">Nombre completo</label><input id="rNombre" placeholder="Ej: María Rodríguez" autocomplete="name"></div>
+          <div class="campo"><label for="rTel">Teléfono</label><input id="rTel" placeholder="Ej: 8888-8888" inputmode="tel" autocomplete="tel"></div>
+          <div class="msg" id="rMsg"></div>
+          <button class="btn" onclick="crearTarjeta()">Crear mi tarjeta</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="vcard" id="vcard">
+          <div class="vcard-top">
+            <div>
+              <small>Tarjeta de cliente</small>
+              <div class="nombre" id="cNombre">Tu nombre aquí</div>
+            </div>
+            <div class="vcard-logo"><img src="logo.png" alt="Willy's"></div>
+          </div>
+          <div class="sellos" id="sellos"></div>
+          <div class="vcard-bottom">
+            <div><small>Código</small><div class="codigo" id="cCodigo">WL-0000</div></div>
+            <div class="progreso" id="cProg">0 / 10 sellos</div>
+          </div>
+          <div class="premio-banner" id="premio">🎉 ¡Ganaste un plato del día gratis! Mostrá esta tarjeta al personal.</div>
+        </div>
+        <div class="acciones" id="acciones" style="display:none">
+          <button class="btn sm dark" onclick="abrirModal('compra')">🧾 Registrar compra (personal)</button>
+          <button class="btn sm" id="btnCanje" style="display:none" onclick="abrirModal('canje')">🎁 Canjear premio (personal)</button>
+          <button class="link-sm" onclick="borrarTarjeta()">Usar otra tarjeta</button>
+        </div>
+        <div class="historial" id="historial" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL PERSONAL -->
+<div class="modal" id="modal" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-box">
+    <h3 id="mTitulo">Registrar compra</h3>
+    <p id="mDesc">Solo para el personal de Willy's.</p>
+    <div class="campo" id="mMontoWrap"><label for="mMonto">Monto de la compra (₡)</label><input id="mMonto" type="number" inputmode="numeric" placeholder="Ej: 6500"></div>
+    <div class="campo"><label for="mPin">PIN del personal</label><input id="mPin" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+    <div class="msg" id="mMsg"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" id="mOk" onclick="confirmarModal()">Confirmar</button>
+      <button class="btn outline" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <div class="wrap about">
+    <div class="about-img">
+      <img src="img/pinto.jpg" alt="Gallo pinto Willy's">
+      <img src="img/camarones.jpg" alt="Arroz con camarones Willy's">
+    </div>
+    <div>
+      <span class="script" style="color:var(--naranja);font-size:2rem">Nuestra historia</span>
+      <h2>Comer en Willy's es como comer en casa.</h2>
+      <p>Willy's nació en 2022 con una idea simple: que comer aquí se sienta como comer en casa. Comida rica, abundante y a buen precio, con la atención cercana de un negocio familiar.</p>
+      <p>Cada plato sale de nuestra cocina preparado al momento. Nos encanta ver a nuestros clientes volver, y por eso cuidamos cada detalle.</p>
+      <div class="stats">
+        <div><b>2022</b><small>Abrimos</small></div>
+        <div><b>100%</b><small>Hecho al momento</small></div>
+        <div><b>❤</b><small>Con cariño</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISÍTANOS -->
+<section id="visitanos">
+  <div class="wrap">
+    <div class="titulo">
+      <span class="script">Te esperamos</span>
+      <h2>Visítanos</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="ic">📍</div>
+        <h3>Ubicación</h3>
+        <p id="direccion">Dirección del local, Costa Rica</p>
+        <a class="btn" id="maps" href="#" target="_blank" rel="noopener">Cómo llegar</a>
+      </div>
+      <div class="card">
+        <div class="ic">🕒</div>
+        <h3>Horario</h3>
+        <ul id="horario"></ul>
+      </div>
+      <div class="card">
+        <div class="ic">📞</div>
+        <h3>Pedidos</h3>
+        <p>Pedí por WhatsApp y lo tenemos listo para cuando llegués.</p>
+        <p style="margin-top:8px;font-weight:600;color:#fff" id="telTexto"></p>
+        <p style="margin-top:8px">✉️ <a class="correo" id="correoTexto" href="#"></a></p>
+        <a class="btn" href="#" data-wa="Hola Willy's, quiero hacer un pedido">💬 WhatsApp</a>
+      </div>
+    </div>
+    <div class="pagos">
+      <div>
+        <h3>Formas de pago</h3>
+        <p>Pagá como te quede más cómodo.</p>
+      </div>
+      <div class="chips">
+        <span class="chip">💳 Tarjeta</span>
+        <span class="chip sinpe">📱 SINPE Móvil</span>
+        <span class="chip">💵 Efectivo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="cta">
+    <h2>¿Con hambre? 🍽️</h2>
+    <p>Escribinos y armamos tu pedido en minutos.</p>
+    <a class="btn" href="#" data-wa="Hola Willy's, quiero hacer un pedido">Hacer mi pedido</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <img src="logo.png" alt="Willy's">
+    <div class="social">
+      <a href="https://www.facebook.com/willlyscr/" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4 1.7-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8.5c0-.3.2-.5.5-.5z"/></svg>
+      </a>
+      <a href="#" data-wa="Hola Willy's" aria-label="WhatsApp">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.7-.2 1.2z"/></svg>
+      </a>
+    </div>
+    <p style="margin-bottom:6px"><a id="correoFooter" href="#" style="color:var(--naranja);font-weight:600"></a> · <a href="#" data-wa="Hola Willy's" style="font-weight:600">7169-7874</a></p>
+    <small>© <span id="year"></span> Willy's · Desde 2022</small>
+  </div>
+</footer>
+
+<a href="#" class="wa-float" data-wa="Hola Willy's, quiero hacer un pedido" aria-label="WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.7-.2 1.2z"/></svg>
+</a>
+
+<script>
+/* =========================================================
+   CONFIGURACIÓN — editar aquí los datos reales del negocio
+   ========================================================= */
+const CONFIG = {
+  whatsapp: "50671697874",            // número con código 506, sin espacios ni +
+  telefonoTexto: "+506 7169-7874",
+  correo: "willys.since2022@gmail.com",
+  direccion: "Dirección del local, Costa Rica",
+  mapsUrl: "https://maps.google.com/?q=Willy's+Costa+Rica",
+  horario: [
+    ["Horario de atención", "7:00 am – 3:00 pm"]   // agregar días si aplica
+  ]
+};
+
+/* =========================================================
+   MENÚ — datos reales del menú de Willy's
+   Cada pestaña tiene secciones; cada sección tiene platos.
+   precio: texto tal cual se muestra · combo: precio en combo (opcional)
+   ========================================================= */
+const MENU = {
+  "Desayunos": [
+    { titulo:"Gallo pinto", foto:"img/pinto.jpg", platos:[
+      { nombre:"Pinto básico", precio:"₡2.500", desc:"Porción de pinto, huevo, maduro y tostadas o tortillas. Bebida de cortesía: café negro, agua dulce negra o té frío." },
+      { nombre:"Pinto premium", precio:"₡3.500", desc:"Porción de pinto, huevo, maduros, queso o natilla, salchichón o salchicha, tostadas o tortilla. Bebida de cortesía: café negro, agua dulce negra o té frío." },
+      { nombre:"Burrito de pinto", precio:"₡3.500", desc:"Tortilla de harina, pinto, torta de huevo, maduro, salchicha o salchichón y natilla." },
+      { nombre:"Porción de pinto", precio:"₡1.500" },
+      { nombre:"Adicionales", precio:"₡1.300 / ₡2.200", desc:"Carne en salsa / proteínas.", sinPedido:true }
+    ]},
+    { titulo:"Omelette", platos:[
+      { nombre:"Pollo, carne o jamón", precio:"₡3.500", desc:"Chile, cebolla, culantro, hongos, queso, tomate, proteína a elegir. Acompañado de tostadas, tortilla o gallo pinto." }
+    ]},
+    { titulo:"Huevos", platos:[
+      { nombre:"Rancheros", precio:"₡2.000", desc:"Dos huevos fritos montados en tortilla, frijoles refritos, salsa ranchera, salsa de queso, natilla y tostadas." },
+      { nombre:"Huevos revueltos con…", precio:"₡1.850", desc:"Salchicha, tomate, jamón o cebolla. Acompañados de tortilla o tostada." }
+    ]},
+    { titulo:"Prensadas", platos:[
+      { nombre:"Queso", precio:"₡1.500" },
+      { nombre:"Queso y frijol", precio:"₡2.000" },
+      { nombre:"Queso y jamón", precio:"₡2.000" },
+      { nombre:"Queso, frijol y jamón", precio:"₡2.750" }
+    ]},
+    { titulo:"Croissant", sub:"Incluye lechuga y tomate.", platos:[
+      { nombre:"Huevo con frijol", precio:"₡1.500" },
+      { nombre:"Huevo, frijol y queso", precio:"₡2.200" }
+    ]}
+  ],
+  "Almuerzos": [
+    { titulo:"Deliciosos almuerzos", foto:"img/almuerzo.jpg", precioSeccion:"₡4.500",
+      sub:"<b>Incluyen:</b> entrada del día y bebida natural. <b>Elegí tu estilo:</b> Casado (arroz, frijoles, ensalada, plátano maduro) o Willy's (papas fritas, ensalada y plátano maduro).",
+      proteinas:["Pollo a la plancha","Pollo empanizado","Nuggets","Fajitas de pollo","Fajitas de res","Carne en salsa","Pescado al ajillo","Pescado empanizado","Pescado a la plancha","Chuleta"],
+      platos:[ { nombre:"Almuerzo (Casado o Willy's)", precio:"₡4.500", desc:"Con la proteína a elegir." } ]},
+    { titulo:"Arroces", foto:"img/camarones.jpg", sub:"Con papas fritas, ensalada y bebida natural.", platos:[
+      { nombre:"Arroz con carne", precio:"₡4.800", combo:"₡6.000" },
+      { nombre:"Arroz con pollo", precio:"₡4.800", combo:"₡6.000" },
+      { nombre:"Arroz con camarones", precio:"₡4.800", combo:"₡6.000" }
+    ]},
+    { titulo:"Platillos especiales", sub:"Acompañados de papas fritas y ensalada.", platos:[
+      { nombre:"Costillas San Louis", precio:"₡5.500" },
+      { nombre:"Camarones empanizados", precio:"₡5.500" }
+    ]},
+    { titulo:"Spaghetti", platos:[
+      { nombre:"Salsa blanca", precio:"₡4.800", combo:"₡6.000", desc:"Con pollo o camarón. Acompañado de pan tostado." },
+      { nombre:"A la boloñesa", precio:"₡4.800", combo:"₡6.000", desc:"Con carne molida. Acompañado de queso mozzarella y pan tostado." }
+    ]},
+    { titulo:"Ensaladas", platos:[
+      { nombre:"Willy's", precio:"₡4.800", combo:"₡6.000", desc:"Lechuga, zanahoria, garbanzos, maíz dulce, huevo duro, tomate, pepino, aguacate, proteína y aderezo a elegir: pollo a la plancha, pollo empanizado, nuggets, fajitas de pollo, fajitas de res, carne en salsa, pescado al ajillo, pescado a la plancha o chuleta." }
+    ]}
+  ],
+  "Antojos": [
+    { titulo:"Sándwiches", platos:[
+      { nombre:"Lápiz 30 cm", precio:"₡3.500", desc:"Pan, lechuga, tomate, queso amarillo, jamón, salsas y proteína a elegir: pollo, carne o extra jamón." },
+      { nombre:"Sándwich", precio:"₡2.800", desc:"Pan cuadrado o integral. Lechuga, tomate, queso amarillo, jamón, salsas y proteína a elegir: pollo, carne o extra jamón." },
+      { nombre:"Pan chapata", precio:"₡3.200", desc:"Pan de masa madre." },
+      { nombre:"Manita del Chavo", precio:"₡2.800", desc:"Manita pan francés, lechuga, tomate, torta de huevo, frijoles refritos, jamón y salsas." },
+      { nombre:"Adicionales", precio:"₡1.000", desc:"Carne o pollo.", sinPedido:true }
+    ]},
+    { titulo:"Hamburguesa", platos:[
+      { nombre:"Hamburguesa Willy's", precio:"₡4.500", desc:"Pan de hamburguesa, lechuga, tomate, jamón, queso amarillo, torta de carne Willy's, pepinillo, salsa de la casa y papas fritas." }
+    ]},
+    { titulo:"Chimichanga", platos:[
+      { nombre:"Carne o pollo", precio:"₡4.800", desc:"Tortilla de harina frita, frijoles, aguacate, queso mozzarella, proteína a elegir y papas fritas. Incluye bebida natural." }
+    ]},
+    { titulo:"Quesadilla", platos:[
+      { nombre:"Carne, pollo o jamón", precio:"₡4.800", desc:"Tortilla de harina, frijoles, lechuga, tomate, queso mozzarella, salsas, natilla, queso cheddar y papas fritas. Incluye bebida natural." }
+    ]},
+    { titulo:"Otros", platos:[
+      { nombre:"Nuggets con papas", precio:"₡3.800" },
+      { nombre:"Dedos de pescado con papas fritas", precio:"₡3.800" },
+      { nombre:"Papas fritas pequeñas", precio:"₡1.500" },
+      { nombre:"Papas fritas grandes", precio:"₡2.500" },
+      { nombre:"Sopa del día", precio:"₡3.500" }
+    ]}
+  ],
+  "Bebidas": [
+    { titulo:"Bebidas calientes", platos:[
+      { nombre:"Café negro", precio:"₡800 / ₡1.000 / ₡1.200", desc:"Pequeño / mediano / grande." },
+      { nombre:"Café con leche", precio:"₡1.000 / ₡1.200 / ₡1.500", desc:"Pequeño / mediano / grande." },
+      { nombre:"Agua dulce", precio:"₡1.000 / ₡1.500", desc:"Negra / con leche." },
+      { nombre:"Té manzanilla o negro", precio:"₡1.000 / ₡1.300" },
+      { nombre:"Chocolate caliente", precio:"₡1.500" }
+    ]},
+    { titulo:"Bebidas frías", platos:[
+      { nombre:"Jugo de naranja", precio:"₡1.400" },
+      { nombre:"Té frío", precio:"₡1.300" },
+      { nombre:"Naturales en agua", precio:"₡1.300" },
+      { nombre:"Gaseosa", precio:"₡1.400" }
+    ]}
+  ]
+};
+
+/* ====================== lógica ====================== */
+const fmt = n => "₡" + n.toLocaleString("es-CR");
+const waLink = msg => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+function pintarCategoria(cat){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.cat===cat));
+  document.getElementById("grid").innerHTML = MENU[cat].map(sec=>`
+    <div class="seccion">
+      <div class="seccion-head">
+        ${sec.foto?`<img src="${sec.foto}" alt="${sec.titulo}" loading="lazy">`:''}
+        <div><h3>${sec.titulo}</h3>${sec.precioSeccion?`<div class="precio" style="color:var(--naranja);font-weight:800;font-size:1.4rem;margin-top:6px">${sec.precioSeccion}</div>`:''}</div>
+      </div>
+      ${sec.sub?`<p class="sub">${sec.sub}</p>`:''}
+      ${sec.proteinas?`<p class="sub"><b>Proteína a elegir:</b></p><ul class="lista-prot">${sec.proteinas.map(x=>`<li>${x}</li>`).join("")}</ul>`:''}
+      ${sec.platos.map(p=>`
+        <div class="plato-row">
+          <div class="top"><h4>${p.nombre}</h4><span class="dots"></span><span class="precio">${p.precio}</span></div>
+          ${p.desc?`<p>${p.desc}</p>`:''}
+          ${(p.combo||!p.sinPedido)?`<div class="meta">${p.combo?`<span class="combo">En combo ${p.combo}</span>`:''}${p.sinPedido?'':`<a class="pedir" target="_blank" rel="noopener" href="${waLink(`Hola Willy's, quiero pedir: ${p.nombre} (${sec.titulo}) - ${p.precio}`)}">Pedir →</a>`}</div>`:''}
+        </div>`).join("")}
+    </div>`).join("");
+}
+
+const cats = Object.keys(MENU);
+document.getElementById("tabs").innerHTML = cats.map(c=>`<button class="tab" data-cat="${c}">${c}</button>`).join("");
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>pintarCategoria(t.dataset.cat));
+pintarCategoria(cats[0]);
+
+document.querySelectorAll("[data-wa]").forEach(a=>{a.href=waLink(a.dataset.wa);a.target="_blank";a.rel="noopener"});
+document.getElementById("direccion").textContent = CONFIG.direccion;
+document.getElementById("maps").href = CONFIG.mapsUrl;
+document.getElementById("telTexto").textContent = CONFIG.telefonoTexto;
+["correoTexto","correoFooter"].forEach(id=>{const a=document.getElementById(id);a.textContent=CONFIG.correo;a.href="mailto:"+CONFIG.correo;});
+document.getElementById("horario").innerHTML = CONFIG.horario.map(([d,h])=>`<li><span>${d}</span><span>${h}</span></li>`).join("");
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* =========================================================
+   TARJETA VIRTUAL — reglas del programa
+   ========================================================= */
+const LEALTAD = {
+  sellosMeta: 10,          // compras necesarias
+  montoMinimo: 5000,       // consumo mínimo por compra (₡)
+  premio: "Plato del día gratis",
+  // PIN del personal guardado como hash SHA-256 (no en texto plano).
+  // Para cambiarlo: en la consola del navegador ejecutar  await sha256("NUEVOPIN")
+  // y pegar el resultado aquí.
+  pinHash: "b1ab1e892617f210425f658cf1d361b5489028c8771b56d845fe1c62c1fbc8b0"
+};
+const KEY = "willys_tarjeta_v1";
+
+async function sha256(t){
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+const leer = () => { try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } };
+const guardar = t => { try { localStorage.setItem(KEY, JSON.stringify(t)); } catch(e){} };
+const fecha = () => new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"});
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800);}
+
+function pintarTarjeta(){
+  const t = leer();
+  const sellos = t ? t.sellos : 0;
+  document.getElementById("cNombre").textContent = t ? t.nombre : "Tu nombre aquí";
+  document.getElementById("cCodigo").textContent = t ? t.codigo : "WL-0000";
+  document.getElementById("cProg").textContent = `${sellos} / ${LEALTAD.sellosMeta} sellos`;
+  document.getElementById("sellos").innerHTML = Array.from({length:LEALTAD.sellosMeta},(_,i)=>{
+    const ultimo = i===LEALTAD.sellosMeta-1;
+    return `<div class="sello ${i<sellos?'on':''} ${ultimo?'premio':''}">${i<sellos?'✓':(ultimo?'🎁':i+1)}</div>`;
+  }).join("");
+  const completo = sellos >= LEALTAD.sellosMeta;
+  document.getElementById("premio").classList.toggle("show", completo);
+  document.getElementById("registro").style.display = t ? "none" : "block";
+  document.getElementById("acciones").style.display = t ? "flex" : "none";
+  document.getElementById("btnCanje").style.display = completo ? "inline-flex" : "none";
+  const h = document.getElementById("historial");
+  if (t && t.historial.length){
+    h.style.display="block";
+    h.innerHTML = "<b style='display:block;margin-bottom:6px;color:var(--negro)'>Historial</b>" +
+      t.historial.slice().reverse().map(x=>`<div><span>${x.f} · ${x.d}</span><span>${x.m?fmt(x.m):''}</span></div>`).join("");
+  } else h.style.display="none";
+}
+
+function crearTarjeta(){
+  const n = document.getElementById("rNombre").value.trim();
+  const tel = document.getElementById("rTel").value.replace(/\D/g,"");
+  const msg = document.getElementById("rMsg");
+  if (n.length < 3){ msg.className="msg err"; msg.textContent="Escribí tu nombre completo."; return; }
+  if (tel.length < 8){ msg.className="msg err"; msg.textContent="Escribí un teléfono válido (8 dígitos)."; return; }
+  const codigo = "WL-" + tel.slice(-4) + Math.floor(Math.random()*90+10);
+  guardar({ nombre:n, telefono:tel, codigo, sellos:0, canjes:0, creada:fecha(), historial:[{f:fecha(),d:"Tarjeta creada"}] });
+  pintarTarjeta(); toast("¡Tarjeta creada! Ya podés acumular sellos 🎉");
+}
+
+function borrarTarjeta(){
+  if (confirm("¿Quitar esta tarjeta de este celular? Se perderán los sellos guardados aquí.")){
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    pintarTarjeta();
+  }
+}
+
+let modo = "compra";
+function abrirModal(m){
+  modo = m;
+  document.getElementById("mTitulo").textContent = m==="compra" ? "Registrar compra" : "Canjear premio";
+  document.getElementById("mDesc").textContent = m==="compra"
+    ? `Solo para el personal. Se suma un sello si la compra es de ${fmt(LEALTAD.montoMinimo)} o más.`
+    : `Solo para el personal. Se entrega: ${LEALTAD.premio}. La tarjeta vuelve a 0.`;
+  document.getElementById("mMontoWrap").style.display = m==="compra" ? "block" : "none";
+  document.getElementById("mMonto").value = ""; document.getElementById("mPin").value = "";
+  document.getElementById("mMsg").textContent = "";
+  document.getElementById("modal").classList.add("show");
+}
+function cerrarModal(){ document.getElementById("modal").classList.remove("show"); }
+
+async function confirmarModal(){
+  const msg = document.getElementById("mMsg");
+  const t = leer(); if (!t) return cerrarModal();
+  const pin = document.getElementById("mPin").value;
+  if ((await sha256(pin)) !== LEALTAD.pinHash){ msg.className="msg err"; msg.textContent="PIN incorrecto."; return; }
+
+  if (modo === "compra"){
+    const monto = Number(document.getElementById("mMonto").value);
+    if (!monto || monto <= 0){ msg.className="msg err"; msg.textContent="Escribí el monto de la compra."; return; }
+    if (t.sellos >= LEALTAD.sellosMeta){ msg.className="msg err"; msg.textContent="La tarjeta está completa: primero canjeá el premio."; return; }
+    if (monto < LEALTAD.montoMinimo){
+      t.historial.push({f:fecha(), d:"Compra sin sello (menor al mínimo)", m:monto}); guardar(t); pintarTarjeta();
+      msg.className="msg err"; msg.textContent=`La compra no llega a ${fmt(LEALTAD.montoMinimo)}: no suma sello.`; return;
+    }
+    t.sellos++; t.historial.push({f:fecha(), d:`Sello ${t.sellos}`, m:monto}); guardar(t);
+    cerrarModal(); pintarTarjeta();
+    toast(t.sellos >= LEALTAD.sellosMeta ? "🎉 ¡10 sellos! Ganó un plato del día gratis" : `✓ Sello agregado (${t.sellos}/${LEALTAD.sellosMeta})`);
+  } else {
+    if (t.sellos < LEALTAD.sellosMeta){ msg.className="msg err"; msg.textContent="Todavía no completa los sellos."; return; }
+    t.sellos = 0; t.canjes++; t.historial.push({f:fecha(), d:`🎁 Premio canjeado: ${LEALTAD.premio}`}); guardar(t);
+    cerrarModal(); pintarTarjeta(); toast("🎁 Premio canjeado. ¡Buen provecho!");
+  }
+}
+
+pintarTarjeta();
+
+document.querySelectorAll("#links a").forEach(a=>a.onclick=()=>document.getElementById("links").classList.remove("open"));
+</script>
+</body>
+</html>
