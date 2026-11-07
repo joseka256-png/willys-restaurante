@@ -19,6 +19,9 @@ export const firebaseConfig = {
 //  Si se cambian meta o montoMinimo, cambiarlos también en
 //  firestore.rules (las reglas son las que mandan).
 // =========================================================
+// Clave PÚBLICA de reCAPTCHA (Fraud Defense) para App Check contra bots.
+export const APP_CHECK_SITE_KEY = "6Lf2OBQuAAAAACO162Y4bsvy5kZTfjPBkLYRK-rs";
+
 export const LEALTAD = {
   meta: 10,                       // sellos para ganar el premio
   montoMinimo: 5000,              // compra mínima (₡) para sumar sello

@@ -192,7 +192,9 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
 import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs,
          runTransaction, serverTimestamp, onSnapshot }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { firebaseConfig, LEALTAD } from "./firebase-config.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+import { firebaseConfig, LEALTAD, APP_CHECK_SITE_KEY } from "./firebase-config.js";
 
 const $ = id => document.getElementById(id);
 const fmt = n => "₡" + Number(n).toLocaleString("es-CR");
@@ -216,6 +218,7 @@ if (firebaseConfig.apiKey.startsWith("PEGAR")) {
   throw new Error("Firebase sin configurar");
 }
 const app = initializeApp(firebaseConfig);
+try { initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true }); } catch (e) {}
 const auth = getAuth(app);
 const db = getFirestore(app);
 let staff = null;

@@ -6,7 +6,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { firebaseConfig, LEALTAD } from "./firebase-config.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+import { firebaseConfig, LEALTAD, APP_CHECK_SITE_KEY } from "./firebase-config.js";
 
 const $ = id => document.getElementById(id);
 const KEY = "willys_tel";
@@ -31,7 +33,9 @@ $("reglaPremio").textContent = LEALTAD.premio.toLowerCase();
 let db = null;
 try {
   if (firebaseConfig.apiKey.startsWith("PEGAR")) throw new Error("sin-config");
-  db = getFirestore(initializeApp(firebaseConfig));
+  const app = initializeApp(firebaseConfig);
+  try { initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true }); } catch (e) {}
+  db = getFirestore(app);
 } catch (e) {
   msg($("cMsg"), "La tarjeta se está configurando. Pronto vas a poder registrarte.", "err");
   $("btnConsultar").disabled = true;
