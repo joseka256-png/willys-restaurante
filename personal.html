@@ -67,6 +67,12 @@
   .toast.show{transform:translateX(-50%) translateY(0)}
   .respaldo{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--crema);border:1.5px solid var(--borde);border-radius:14px;padding:14px 16px;margin-bottom:16px}
   .respaldo.alerta{border-color:var(--naranja);background:#fff1e6}
+  .pass-wrap{position:relative}
+  .pass-wrap input{padding-right:52px}
+  .ojo{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gris);padding:8px;border-radius:10px;display:grid;place-items:center}
+  .ojo:hover{color:var(--naranja);background:#fff1e6}
+  .volver{display:block;text-align:center;margin-top:18px;color:var(--gris);font-weight:600;font-size:.9rem;text-decoration:none}
+  .volver:hover{color:var(--naranja)}
   .hidden{display:none!important}
   @media(max-width:760px){.cliente{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.stat b{font-size:1.25rem}}
 </style>
@@ -75,7 +81,7 @@
 <header>
   <div class="bar">
     <img src="logo.png" alt="Willy's">
-    <div class="who"><div id="whoName">Panel del personal</div><button class="btn ghost hidden" id="btnLogout" style="padding:6px 12px;font-size:.8rem;margin-top:4px">Cerrar sesión</button></div>
+    <div class="who"><div id="whoName">Panel del personal</div><a href="./" style="font-size:.8rem;color:var(--naranja);font-weight:600;text-decoration:none">Ver página web →</a><button class="btn ghost hidden" id="btnLogout" style="padding:6px 12px;font-size:.8rem;margin-top:4px">Cerrar sesión</button></div>
   </div>
 </header>
 
@@ -85,9 +91,18 @@
     <h1 style="margin-bottom:4px">Panel del personal</h1>
     <p style="color:var(--gris);font-size:.9rem;margin-bottom:18px">Tarjeta Willy's · sellos y premios</p>
     <div style="margin-bottom:12px"><label for="lEmail">Correo</label><input id="lEmail" type="email" autocomplete="username"></div>
-    <div style="margin-bottom:16px"><label for="lPass">Contraseña</label><input id="lPass" type="password" autocomplete="current-password"></div>
+    <div style="margin-bottom:16px"><label for="lPass">Contraseña</label>
+      <div class="pass-wrap">
+        <input id="lPass" type="password" autocomplete="current-password">
+        <button type="button" class="ojo" id="btnOjo" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+          <svg id="icoVer" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="icoOcultar" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+        </button>
+      </div>
+    </div>
     <button class="btn big" id="btnLogin">Entrar</button>
     <div class="msg" id="lMsg"></div>
+    <a href="./" class="volver">← Ir a la página de Willy's</a>
   </section>
 
   <!-- APP -->
@@ -230,8 +245,17 @@ $("reglaTxt").textContent = LEALTAD.modo === "porCada"
 // ---------- sesión ----------
 $("btnLogin").onclick = async () => {
   msg($("lMsg"), "Entrando…", "ok");
-  try { await signInWithEmailAndPassword(auth, $("lEmail").value.trim(), $("lPass").value); }
+  try { await signInWithEmailAndPassword(auth, $("lEmail").value.trim(), $("lPass").value); $("lPass").value = ""; $("lPass").type = "password"; $("icoVer").classList.remove("hidden"); $("icoOcultar").classList.add("hidden"); }
   catch (e) { msg($("lMsg"), "Correo o contraseña incorrectos."); }
+};
+$("btnOjo").onclick = () => {
+  const ver = $("lPass").type === "password";
+  $("lPass").type = ver ? "text" : "password";
+  $("icoVer").classList.toggle("hidden", ver);
+  $("icoOcultar").classList.toggle("hidden", !ver);
+  $("btnOjo").setAttribute("aria-label", ver ? "Ocultar contraseña" : "Mostrar contraseña");
+  $("btnOjo").title = $("btnOjo").getAttribute("aria-label");
+  $("lPass").focus();
 };
 $("lPass").addEventListener("keydown", e => { if (e.key === "Enter") $("btnLogin").click(); });
 $("btnLogout").onclick = () => signOut(auth);
