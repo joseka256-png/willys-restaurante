@@ -1,0 +1,3 @@
+node_modules/
+clave-servicio*.json
+*-service-account*.json

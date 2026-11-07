@@ -1,0 +1,7 @@
+{
+  "name": "willys-soporte",
+  "private": true,
+  "type": "module",
+  "description": "Herramientas de soporte (solo ISCR Tech) para la Tarjeta Willy's",
+  "dependencies": { "firebase-admin": "^12.0.0" }
+}
