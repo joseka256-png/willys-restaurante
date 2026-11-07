@@ -253,7 +253,7 @@
 </section>
 
 
-<!-- TARJETA VIRTUAL DE CLIENTE -->
+<!-- TARJETA VIRTUAL DE CLIENTE (Firebase) -->
 <section id="tarjeta">
   <div class="wrap">
     <div class="titulo">
@@ -262,17 +262,20 @@
     </div>
     <div class="lealtad">
       <div>
-        <h3>Completá 10 sellos y te regalamos un <span style="color:var(--naranja)">plato del día gratis</span> 🎁</h3>
+        <h3>Completá <span id="reglaMeta">10</span> sellos y te regalamos un <span style="color:var(--naranja)" id="reglaPremio">plato del día gratis</span></h3>
         <ul class="reglas">
-          <li><span class="n">1</span><div><b>Registrate</b> con tu nombre y teléfono. Tu tarjeta queda guardada en tu celular.</div></li>
-          <li><span class="n">2</span><div><b>Cada compra de ₡5 000 o más</b> suma un sello. Al pagar, mostrale tu tarjeta al personal.</div></li>
-          <li><span class="n">3</span><div><b>Al llegar a 10 sellos</b>, canjeás tu plato del día gratis y la tarjeta empieza de nuevo.</div></li>
+          <li><span class="n">1</span><div><b>Registrate</b> con tu teléfono y tu nombre. Tu tarjeta queda guardada en línea: no se pierde aunque cambiés de celular.</div></li>
+          <li><span class="n">2</span><div><b>Cada compra de <span id="reglaMonto">₡5.000</span> o más</b> suma un sello. Al pagar, decí tu número de teléfono en la caja.</div></li>
+          <li><span class="n">3</span><div><b>Al completar los sellos</b>, canjeás tu premio en la caja y la tarjeta empieza de nuevo.</div></li>
         </ul>
-        <div class="registro" id="registro">
-          <div class="campo"><label for="rNombre">Nombre completo</label><input id="rNombre" placeholder="Ej: María Rodríguez" autocomplete="name"></div>
-          <div class="campo"><label for="rTel">Teléfono</label><input id="rTel" placeholder="Ej: 8888-8888" inputmode="tel" autocomplete="tel"></div>
-          <div class="msg" id="rMsg"></div>
-          <button class="btn" onclick="crearTarjeta()">Crear mi tarjeta</button>
+        <div class="registro" id="pasoConsulta">
+          <div class="campo"><label for="cTel">Tu teléfono</label><input id="cTel" placeholder="Ej: 8888-8888" inputmode="tel" autocomplete="tel"></div>
+          <div id="pasoNombre" style="display:none">
+            <div class="campo"><label for="cNombreInput">Nombre completo</label><input id="cNombreInput" placeholder="Ej: María Rodríguez" autocomplete="name"></div>
+            <button class="btn" id="btnCrear" style="margin-bottom:10px">Crear mi tarjeta</button>
+          </div>
+          <div class="msg" id="cMsg"></div>
+          <button class="btn dark" id="btnConsultar">Ver o crear mi tarjeta</button>
         </div>
       </div>
 
@@ -287,36 +290,19 @@
           </div>
           <div class="sellos" id="sellos"></div>
           <div class="vcard-bottom">
-            <div><small>Código</small><div class="codigo" id="cCodigo">WL-0000</div></div>
+            <div><small>Tu número</small><div class="codigo" id="cCodigo">0000-0000</div></div>
             <div class="progreso" id="cProg">0 / 10 sellos</div>
           </div>
-          <div class="premio-banner" id="premio">🎉 ¡Ganaste un plato del día gratis! Mostrá esta tarjeta al personal.</div>
+          <div class="premio-banner" id="premio">¡Ganaste un plato del día gratis! Pedilo en la caja.</div>
         </div>
-        <div class="acciones" id="acciones" style="display:none">
-          <button class="btn sm dark" onclick="abrirModal('compra')">🧾 Registrar compra (personal)</button>
-          <button class="btn sm" id="btnCanje" style="display:none" onclick="abrirModal('canje')">🎁 Canjear premio (personal)</button>
-          <button class="link-sm" onclick="borrarTarjeta()">Usar otra tarjeta</button>
+        <div class="acciones" id="acciones" style="display:none;align-items:center;justify-content:space-between">
+          <small id="canjes" style="color:var(--gris)"></small>
+          <button class="link-sm" id="btnSalir">Usar otro número</button>
         </div>
-        <div class="historial" id="historial" style="display:none"></div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- MODAL PERSONAL -->
-<div class="modal" id="modal" onclick="if(event.target===this)cerrarModal()">
-  <div class="modal-box">
-    <h3 id="mTitulo">Registrar compra</h3>
-    <p id="mDesc">Solo para el personal de Willy's.</p>
-    <div class="campo" id="mMontoWrap"><label for="mMonto">Monto de la compra (₡)</label><input id="mMonto" type="number" inputmode="numeric" placeholder="Ej: 6500"></div>
-    <div class="campo"><label for="mPin">PIN del personal</label><input id="mPin" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
-    <div class="msg" id="mMsg"></div>
-    <div style="display:flex;gap:10px">
-      <button class="btn" id="mOk" onclick="confirmarModal()">Confirmar</button>
-      <button class="btn outline" onclick="cerrarModal()">Cancelar</button>
-    </div>
-  </div>
-</div>
 <div class="toast" id="toast"></div>
 
 <!-- NOSOTROS -->
@@ -402,7 +388,7 @@
       </a>
     </div>
     <p style="margin-bottom:6px"><a id="correoFooter" href="#" style="color:var(--naranja);font-weight:600"></a> · <a href="#" data-wa="Hola Willy's" style="font-weight:600">7169-7874</a></p>
-    <small>© <span id="year"></span> Willy's · Desde 2022</small>
+    <small>© <span id="year"></span> Willy's · Desde 2022 · <a href="personal.html" style="text-decoration:underline">Acceso personal</a></small>
   </div>
 </footer>
 
@@ -557,111 +543,8 @@ document.getElementById("telTexto").textContent = CONFIG.telefonoTexto;
 document.getElementById("horario").innerHTML = CONFIG.horario.map(([d,h])=>`<li><span>${d}</span><span>${h}</span></li>`).join("");
 document.getElementById("year").textContent = new Date().getFullYear();
 
-/* =========================================================
-   TARJETA VIRTUAL — reglas del programa
-   ========================================================= */
-const LEALTAD = {
-  sellosMeta: 10,          // compras necesarias
-  montoMinimo: 5000,       // consumo mínimo por compra (₡)
-  premio: "Plato del día gratis",
-  // PIN del personal guardado como hash SHA-256 (no en texto plano).
-  // Para cambiarlo: en la consola del navegador ejecutar  await sha256("NUEVOPIN")
-  // y pegar el resultado aquí.
-  pinHash: "b1ab1e892617f210425f658cf1d361b5489028c8771b56d845fe1c62c1fbc8b0"
-};
-const KEY = "willys_tarjeta_v1";
-
-async function sha256(t){
-  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
-  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-const leer = () => { try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } };
-const guardar = t => { try { localStorage.setItem(KEY, JSON.stringify(t)); } catch(e){} };
-const fecha = () => new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"});
-function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800);}
-
-function pintarTarjeta(){
-  const t = leer();
-  const sellos = t ? t.sellos : 0;
-  document.getElementById("cNombre").textContent = t ? t.nombre : "Tu nombre aquí";
-  document.getElementById("cCodigo").textContent = t ? t.codigo : "WL-0000";
-  document.getElementById("cProg").textContent = `${sellos} / ${LEALTAD.sellosMeta} sellos`;
-  document.getElementById("sellos").innerHTML = Array.from({length:LEALTAD.sellosMeta},(_,i)=>{
-    const ultimo = i===LEALTAD.sellosMeta-1;
-    return `<div class="sello ${i<sellos?'on':''} ${ultimo?'premio':''}">${i<sellos?'✓':(ultimo?'🎁':i+1)}</div>`;
-  }).join("");
-  const completo = sellos >= LEALTAD.sellosMeta;
-  document.getElementById("premio").classList.toggle("show", completo);
-  document.getElementById("registro").style.display = t ? "none" : "block";
-  document.getElementById("acciones").style.display = t ? "flex" : "none";
-  document.getElementById("btnCanje").style.display = completo ? "inline-flex" : "none";
-  const h = document.getElementById("historial");
-  if (t && t.historial.length){
-    h.style.display="block";
-    h.innerHTML = "<b style='display:block;margin-bottom:6px;color:var(--negro)'>Historial</b>" +
-      t.historial.slice().reverse().map(x=>`<div><span>${x.f} · ${x.d}</span><span>${x.m?fmt(x.m):''}</span></div>`).join("");
-  } else h.style.display="none";
-}
-
-function crearTarjeta(){
-  const n = document.getElementById("rNombre").value.trim();
-  const tel = document.getElementById("rTel").value.replace(/\D/g,"");
-  const msg = document.getElementById("rMsg");
-  if (n.length < 3){ msg.className="msg err"; msg.textContent="Escribí tu nombre completo."; return; }
-  if (tel.length < 8){ msg.className="msg err"; msg.textContent="Escribí un teléfono válido (8 dígitos)."; return; }
-  const codigo = "WL-" + tel.slice(-4) + Math.floor(Math.random()*90+10);
-  guardar({ nombre:n, telefono:tel, codigo, sellos:0, canjes:0, creada:fecha(), historial:[{f:fecha(),d:"Tarjeta creada"}] });
-  pintarTarjeta(); toast("¡Tarjeta creada! Ya podés acumular sellos 🎉");
-}
-
-function borrarTarjeta(){
-  if (confirm("¿Quitar esta tarjeta de este celular? Se perderán los sellos guardados aquí.")){
-    try{ localStorage.removeItem(KEY); }catch(e){}
-    pintarTarjeta();
-  }
-}
-
-let modo = "compra";
-function abrirModal(m){
-  modo = m;
-  document.getElementById("mTitulo").textContent = m==="compra" ? "Registrar compra" : "Canjear premio";
-  document.getElementById("mDesc").textContent = m==="compra"
-    ? `Solo para el personal. Se suma un sello si la compra es de ${fmt(LEALTAD.montoMinimo)} o más.`
-    : `Solo para el personal. Se entrega: ${LEALTAD.premio}. La tarjeta vuelve a 0.`;
-  document.getElementById("mMontoWrap").style.display = m==="compra" ? "block" : "none";
-  document.getElementById("mMonto").value = ""; document.getElementById("mPin").value = "";
-  document.getElementById("mMsg").textContent = "";
-  document.getElementById("modal").classList.add("show");
-}
-function cerrarModal(){ document.getElementById("modal").classList.remove("show"); }
-
-async function confirmarModal(){
-  const msg = document.getElementById("mMsg");
-  const t = leer(); if (!t) return cerrarModal();
-  const pin = document.getElementById("mPin").value;
-  if ((await sha256(pin)) !== LEALTAD.pinHash){ msg.className="msg err"; msg.textContent="PIN incorrecto."; return; }
-
-  if (modo === "compra"){
-    const monto = Number(document.getElementById("mMonto").value);
-    if (!monto || monto <= 0){ msg.className="msg err"; msg.textContent="Escribí el monto de la compra."; return; }
-    if (t.sellos >= LEALTAD.sellosMeta){ msg.className="msg err"; msg.textContent="La tarjeta está completa: primero canjeá el premio."; return; }
-    if (monto < LEALTAD.montoMinimo){
-      t.historial.push({f:fecha(), d:"Compra sin sello (menor al mínimo)", m:monto}); guardar(t); pintarTarjeta();
-      msg.className="msg err"; msg.textContent=`La compra no llega a ${fmt(LEALTAD.montoMinimo)}: no suma sello.`; return;
-    }
-    t.sellos++; t.historial.push({f:fecha(), d:`Sello ${t.sellos}`, m:monto}); guardar(t);
-    cerrarModal(); pintarTarjeta();
-    toast(t.sellos >= LEALTAD.sellosMeta ? "🎉 ¡10 sellos! Ganó un plato del día gratis" : `✓ Sello agregado (${t.sellos}/${LEALTAD.sellosMeta})`);
-  } else {
-    if (t.sellos < LEALTAD.sellosMeta){ msg.className="msg err"; msg.textContent="Todavía no completa los sellos."; return; }
-    t.sellos = 0; t.canjes++; t.historial.push({f:fecha(), d:`🎁 Premio canjeado: ${LEALTAD.premio}`}); guardar(t);
-    cerrarModal(); pintarTarjeta(); toast("🎁 Premio canjeado. ¡Buen provecho!");
-  }
-}
-
-pintarTarjeta();
-
 document.querySelectorAll("#links a").forEach(a=>a.onclick=()=>document.getElementById("links").classList.remove("open"));
 </script>
+<script type="module" src="tarjeta.js"></script>
 </body>
 </html>

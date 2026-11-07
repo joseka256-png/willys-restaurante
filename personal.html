@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Willy's | Panel del personal</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--naranja:#F26A1B;--naranja-osc:#D4550C;--negro:#141414;--gris:#5b5b5b;--crema:#FFF8F1;--borde:#F1E3D6;--verde:#1a9a4b;--rojo:#d33}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',sans-serif;background:var(--crema);color:var(--negro);min-height:100vh}
+  header{background:#fff;border-bottom:1px solid var(--borde);position:sticky;top:0;z-index:10}
+  .bar{max-width:980px;margin:auto;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .bar img{height:52px}
+  .bar .who{font-size:.85rem;color:var(--gris);text-align:right}
+  main{max-width:980px;margin:auto;padding:22px 18px 60px}
+  .card{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:22px;margin-bottom:18px}
+  h1{font-size:1.4rem;font-weight:800}
+  h2{font-size:1.1rem;font-weight:700;margin-bottom:12px}
+  label{display:block;font-weight:600;font-size:.85rem;margin-bottom:6px}
+  input{width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid var(--borde);font-family:inherit;font-size:1.05rem;background:var(--crema)}
+  input:focus{outline:none;border-color:var(--naranja)}
+  .row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+  .row>div{flex:1;min-width:180px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--naranja);color:#fff;padding:13px 22px;border-radius:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;font-size:1rem;transition:.2s;white-space:nowrap}
+  .btn:hover{background:var(--naranja-osc)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.dark{background:var(--negro)}.btn.dark:hover{background:#333}
+  .btn.ghost{background:transparent;color:var(--negro);border:1.5px solid var(--borde)}
+  .btn.oro{background:#ffb627;color:#1b1b1b}
+  .btn.big{padding:16px 26px;font-size:1.1rem;width:100%}
+  .msg{font-size:.9rem;font-weight:600;margin-top:10px;min-height:1.2em}
+  .msg.err{color:var(--rojo)}.msg.ok{color:var(--verde)}
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{padding:9px 18px;border-radius:50px;border:1.5px solid var(--borde);background:#fff;font-family:inherit;font-weight:600;cursor:pointer}
+  .tab.active{background:var(--negro);color:#fff;border-color:var(--negro)}
+  .cliente{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+  .cli-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+  .cli-head .nombre{font-size:1.3rem;font-weight:800}
+  .cli-head .tel{color:var(--gris);font-family:monospace;font-size:1rem}
+  .sellos{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:6px 0 10px}
+  .sello{aspect-ratio:1;border-radius:50%;border:2px dashed #d9c6b4;display:grid;place-items:center;font-weight:700;color:#c9b29c}
+  .sello.on{background:var(--naranja);border:2px solid var(--naranja);color:#fff}
+  .prog{font-weight:800;color:var(--naranja);font-size:1.1rem}
+  .premio{display:none;background:#ffb627;color:#1b1b1b;border-radius:12px;padding:12px;font-weight:700;text-align:center;margin:10px 0}
+  .premio.show{display:block}
+  .hist{font-size:.85rem;max-height:300px;overflow:auto}
+  .hist div{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--borde)}
+  .hist .t-sello{color:var(--verde);font-weight:600}.hist .t-canje{color:#b77900;font-weight:700}.hist .t-sin_sello{color:var(--gris)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--borde)}
+  th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--gris)}
+  td.num{font-weight:700}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .stat{background:var(--crema);border-radius:14px;padding:14px;text-align:center}
+  .stat b{display:block;font-size:1.6rem;color:var(--naranja)}
+  .stat small{color:var(--gris);font-weight:600}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;z-index:50;padding:20px}
+  .modal.show{display:grid}
+  .modal-box{background:#fff;border-radius:20px;padding:24px;width:min(420px,100%)}
+  .modal-box p{color:var(--gris);margin:8px 0 18px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--negro);color:#fff;padding:14px 22px;border-radius:50px;font-weight:600;z-index:60;transition:.3s;max-width:92vw;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .hidden{display:none!important}
+  @media(max-width:760px){.cliente{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.stat b{font-size:1.25rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <img src="logo.png" alt="Willy's">
+    <div class="who"><div id="whoName">Panel del personal</div><button class="btn ghost hidden" id="btnLogout" style="padding:6px 12px;font-size:.8rem;margin-top:4px">Cerrar sesión</button></div>
+  </div>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <section id="vLogin" class="card" style="max-width:420px;margin:30px auto">
+    <h1 style="margin-bottom:4px">Panel del personal</h1>
+    <p style="color:var(--gris);font-size:.9rem;margin-bottom:18px">Tarjeta Willy's · sellos y premios</p>
+    <div style="margin-bottom:12px"><label for="lEmail">Correo</label><input id="lEmail" type="email" autocomplete="username"></div>
+    <div style="margin-bottom:16px"><label for="lPass">Contraseña</label><input id="lPass" type="password" autocomplete="current-password"></div>
+    <button class="btn big" id="btnLogin">Entrar</button>
+    <div class="msg" id="lMsg"></div>
+  </section>
+
+  <!-- APP -->
+  <section id="vApp" class="hidden">
+    <div class="tabs">
+      <button class="tab active" data-v="caja">Caja</button>
+      <button class="tab" data-v="reporte">Clientes y reporte</button>
+    </div>
+
+    <!-- CAJA -->
+    <div id="pCaja">
+      <div class="card">
+        <div class="row">
+          <div><label for="bTel">Teléfono del cliente</label><input id="bTel" inputmode="numeric" placeholder="8888-8888" autocomplete="off"></div>
+          <button class="btn dark" id="btnBuscar">Buscar</button>
+        </div>
+        <div class="msg" id="bMsg"></div>
+        <div id="crearBox" class="hidden" style="margin-top:12px">
+          <div class="row">
+            <div><label for="nNombre">No tiene tarjeta. Nombre del cliente:</label><input id="nNombre" placeholder="Nombre completo"></div>
+            <button class="btn" id="btnCrearCli">Crear tarjeta</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="cliBox" class="card hidden">
+        <div class="cliente">
+          <div>
+            <div class="cli-head">
+              <div><div class="nombre" id="cliNombre"></div><div class="tel" id="cliTel"></div></div>
+              <div class="prog" id="cliProg"></div>
+            </div>
+            <div class="sellos" id="cliSellos"></div>
+            <div class="premio" id="cliPremio"></div>
+            <div id="compraBox">
+              <label for="monto">Monto de la compra (₡)</label>
+              <div class="row">
+                <div><input id="monto" type="number" inputmode="numeric" placeholder="Ej: 9000" min="0"></div>
+                <button class="btn" id="btnSello">Registrar compra</button>
+              </div>
+              <small id="reglaTxt" style="color:var(--gris);display:block;margin-top:6px"></small>
+            </div>
+            <button class="btn oro big hidden" id="btnCanje" style="margin-top:10px">Canjear premio</button>
+            <div class="msg" id="cliMsg"></div>
+          </div>
+          <div>
+            <h2>Últimos movimientos</h2>
+            <div class="hist" id="cliHist"><small style="color:var(--gris)">Sin movimientos.</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTE -->
+    <div id="pReporte" class="hidden">
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><b id="sClientes">–</b><small>Clientes</small></div>
+          <div class="stat"><b id="sSellos">–</b><small>Sellos activos</small></div>
+          <div class="stat"><b id="sCanjes">–</b><small>Premios canjeados</small></div>
+        </div>
+        <div class="row" style="justify-content:space-between;margin-bottom:10px">
+          <h2 style="margin:0">Clientes frecuentes</h2>
+          <button class="btn ghost" id="btnCSV">Descargar Excel (CSV)</button>
+        </div>
+        <div style="overflow:auto">
+          <table>
+            <thead><tr><th>Cliente</th><th>Teléfono</th><th>Sellos</th><th>Premios</th><th>Última visita</th></tr></thead>
+            <tbody id="tbClientes"><tr><td colspan="5">Cargando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2 id="mTitulo">¿Confirmar?</h2>
+    <p id="mTexto"></p>
+    <div class="row"><button class="btn" id="mSi">Sí, confirmar</button><button class="btn ghost" id="mNo">Cancelar</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs,
+         runTransaction, serverTimestamp, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig, LEALTAD } from "./firebase-config.js";
+
+const $ = id => document.getElementById(id);
+const fmt = n => "₡" + Number(n).toLocaleString("es-CR");
+const soloDigitos = t => (t || "").replace(/\D/g, "").slice(-8);
+const telBonito = t => t.slice(0, 4) + "-" + t.slice(4);
+const fFecha = ts => ts && ts.toDate ? ts.toDate().toLocaleString("es-CR", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" }) : "";
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+function msg(el, t, tipo = "err") { el.className = "msg " + tipo; el.textContent = t; }
+function toast(m) { const t = $("toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3200); }
+function confirmar(titulo, texto) {
+  return new Promise(res => {
+    $("mTitulo").textContent = titulo; $("mTexto").textContent = texto; $("modal").classList.add("show");
+    const fin = v => { $("modal").classList.remove("show"); res(v); };
+    $("mSi").onclick = () => fin(true); $("mNo").onclick = () => fin(false);
+  });
+}
+
+if (firebaseConfig.apiKey.startsWith("PEGAR")) {
+  msg($("lMsg"), "Falta pegar la configuración de Firebase en firebase-config.js.");
+  $("btnLogin").disabled = true;
+  throw new Error("Firebase sin configurar");
+}
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let staff = null;
+
+$("reglaTxt").textContent = LEALTAD.modo === "porCada"
+  ? `1 sello por cada ${fmt(LEALTAD.montoMinimo)} (máximo hasta completar ${LEALTAD.meta}).`
+  : `1 sello por compra de ${fmt(LEALTAD.montoMinimo)} o más.`;
+
+// ---------- sesión ----------
+$("btnLogin").onclick = async () => {
+  msg($("lMsg"), "Entrando…", "ok");
+  try { await signInWithEmailAndPassword(auth, $("lEmail").value.trim(), $("lPass").value); }
+  catch (e) { msg($("lMsg"), "Correo o contraseña incorrectos."); }
+};
+$("lPass").addEventListener("keydown", e => { if (e.key === "Enter") $("btnLogin").click(); });
+$("btnLogout").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { staff = null; mostrar(false); return; }
+  try {
+    const s = await getDoc(doc(db, "staff", user.uid));
+    if (!s.exists()) throw new Error("no-staff");
+    staff = { uid: user.uid, email: user.email, nombre: s.data().nombre || user.email };
+    $("whoName").textContent = staff.nombre;
+    mostrar(true); $("bTel").focus();
+  } catch (e) {
+    await signOut(auth);
+    msg($("lMsg"), "Este usuario no está autorizado como personal de Willy's.");
+  }
+});
+function mostrar(dentro) {
+  $("vLogin").classList.toggle("hidden", dentro);
+  $("vApp").classList.toggle("hidden", !dentro);
+  $("btnLogout").classList.toggle("hidden", !dentro);
+  if (!dentro) $("whoName").textContent = "Panel del personal";
+}
+
+// ---------- pestañas ----------
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
+  $("pCaja").classList.toggle("hidden", t.dataset.v !== "caja");
+  $("pReporte").classList.toggle("hidden", t.dataset.v !== "reporte");
+  if (t.dataset.v === "reporte") cargarReporte();
+});
+
+// ---------- buscar cliente ----------
+let telActual = null, stopCli = null, stopHist = null, cliActual = null;
+$("btnBuscar").onclick = buscar;
+$("bTel").addEventListener("keydown", e => { if (e.key === "Enter") buscar(); });
+async function buscar() {
+  const tel = soloDigitos($("bTel").value);
+  $("crearBox").classList.add("hidden");
+  if (tel.length !== 8) return msg($("bMsg"), "Escribí un teléfono de 8 dígitos.");
+  msg($("bMsg"), "Buscando…", "ok");
+  const snap = await getDoc(doc(db, "tarjetas", tel));
+  if (!snap.exists()) {
+    cerrarCliente(); telActual = tel;
+    msg($("bMsg"), `El ${telBonito(tel)} no tiene tarjeta.`);
+    $("crearBox").classList.remove("hidden"); $("nNombre").focus();
+    return;
+  }
+  msg($("bMsg"), "", "ok"); abrirCliente(tel);
+}
+$("btnCrearCli").onclick = async () => {
+  const nombre = $("nNombre").value.trim().replace(/\s+/g, " ");
+  if (nombre.length < 3) return msg($("bMsg"), "Escribí el nombre completo.");
+  try {
+    await setDoc(doc(db, "tarjetas", telActual), { nombre: nombre.slice(0, 60), telefono: telActual, sellos: 0, canjes: 0, creada: serverTimestamp(), actualizada: serverTimestamp() });
+    $("crearBox").classList.add("hidden"); $("nNombre").value = ""; msg($("bMsg"), "Tarjeta creada.", "ok");
+    abrirCliente(telActual);
+  } catch (e) { msg($("bMsg"), "No se pudo crear la tarjeta."); }
+};
+
+function cerrarCliente() {
+  if (stopCli) stopCli(); if (stopHist) stopHist();
+  stopCli = stopHist = null; cliActual = null; $("cliBox").classList.add("hidden");
+}
+function abrirCliente(tel) {
+  cerrarCliente(); telActual = tel;
+  $("cliBox").classList.remove("hidden"); $("monto").value = ""; msg($("cliMsg"), "", "ok");
+  stopCli = onSnapshot(doc(db, "tarjetas", tel), s => { if (s.exists()) pintarCliente(s.data()); });
+  stopHist = onSnapshot(query(collection(db, "tarjetas", tel, "movimientos"), orderBy("fecha", "desc"), limit(15)), qs => {
+    $("cliHist").innerHTML = qs.empty ? '<small style="color:var(--gris)">Sin movimientos.</small>' :
+      qs.docs.map(d => { const m = d.data();
+        const txt = m.tipo === "sello" ? `+${m.sellosAgregados} sello${m.sellosAgregados > 1 ? "s" : ""} · ${fmt(m.monto)}`
+                  : m.tipo === "canje" ? "Premio canjeado" : `Sin sello · ${fmt(m.monto)}`;
+        return `<div><span class="t-${m.tipo}">${txt}</span><span style="color:var(--gris)">${fFecha(m.fecha)} · ${esc((m.staffNombre || "").split(" ")[0])}</span></div>`;
+      }).join("");
+  });
+  setTimeout(() => $("monto").focus(), 100);
+}
+function pintarCliente(c) {
+  cliActual = c;
+  $("cliNombre").textContent = c.nombre;
+  $("cliTel").textContent = telBonito(c.telefono) + (c.canjes ? ` · ${c.canjes} premio${c.canjes > 1 ? "s" : ""} canjeado${c.canjes > 1 ? "s" : ""}` : "");
+  $("cliProg").textContent = `${c.sellos} / ${LEALTAD.meta}`;
+  $("cliSellos").innerHTML = Array.from({ length: LEALTAD.meta }, (_, i) => `<div class="sello ${i < c.sellos ? "on" : ""}">${i < c.sellos ? "✓" : i + 1}</div>`).join("");
+  const lleno = c.sellos >= LEALTAD.meta;
+  $("cliPremio").textContent = `Tarjeta completa: entregar ${LEALTAD.premio.toLowerCase()}.`;
+  $("cliPremio").classList.toggle("show", lleno);
+  $("btnCanje").classList.toggle("hidden", !lleno);
+  $("compraBox").classList.toggle("hidden", lleno);
+}
+
+// ---------- registrar compra ----------
+$("monto").addEventListener("keydown", e => { if (e.key === "Enter") $("btnSello").click(); });
+$("btnSello").onclick = async () => {
+  const monto = Math.round(Number($("monto").value));
+  if (!monto || monto <= 0) return msg($("cliMsg"), "Escribí el monto de la compra.");
+  if (monto > 500000) return msg($("cliMsg"), "Revisá el monto: parece demasiado alto.");
+  $("btnSello").disabled = true;
+  try {
+    const r = await runTransaction(db, async tx => {
+      const ref = doc(db, "tarjetas", telActual);
+      const s = await tx.get(ref);
+      if (!s.exists()) throw new Error("no-existe");
+      const c = s.data();
+      if (c.sellos >= LEALTAD.meta) throw new Error("llena");
+      let agregar = 0;
+      if (monto >= LEALTAD.montoMinimo)
+        agregar = LEALTAD.modo === "porCada" ? Math.floor(monto / LEALTAD.montoMinimo) : 1;
+      agregar = Math.min(agregar, LEALTAD.meta - c.sellos);
+      const movRef = doc(collection(db, "tarjetas", telActual, "movimientos"));
+      tx.set(movRef, { tipo: agregar ? "sello" : "sin_sello", monto, sellosAgregados: agregar,
+        sellosAntes: c.sellos, sellosDespues: c.sellos + agregar,
+        staffUid: staff.uid, staffNombre: staff.nombre, fecha: serverTimestamp() });
+      if (agregar) tx.update(ref, { sellos: c.sellos + agregar, actualizada: serverTimestamp() });
+      return { agregar, total: c.sellos + agregar };
+    });
+    $("monto").value = "";
+    if (!r.agregar) msg($("cliMsg"), `Compra registrada sin sello: es menor a ${fmt(LEALTAD.montoMinimo)}.`);
+    else {
+      msg($("cliMsg"), `✓ ${r.agregar} sello${r.agregar > 1 ? "s" : ""} agregado${r.agregar > 1 ? "s" : ""}. Lleva ${r.total} de ${LEALTAD.meta}.`, "ok");
+      toast(r.total >= LEALTAD.meta ? "¡Tarjeta completa! Ganó el premio." : `✓ Sello agregado (${r.total}/${LEALTAD.meta})`);
+    }
+  } catch (e) {
+    msg($("cliMsg"), e.message === "llena" ? "La tarjeta está completa: primero canjeá el premio." : "No se pudo registrar. Revisá la conexión e intentá de nuevo.");
+  }
+  $("btnSello").disabled = false;
+};
+
+// ---------- canjear premio ----------
+$("btnCanje").onclick = async () => {
+  if (!cliActual) return;
+  const ok = await confirmar("Canjear premio", `¿Entregar ${LEALTAD.premio.toLowerCase()} a ${cliActual.nombre}? La tarjeta vuelve a 0.`);
+  if (!ok) return;
+  $("btnCanje").disabled = true;
+  try {
+    await runTransaction(db, async tx => {
+      const ref = doc(db, "tarjetas", telActual);
+      const s = await tx.get(ref); const c = s.data();
+      if (c.sellos < LEALTAD.meta) throw new Error("incompleta");
+      tx.set(doc(collection(db, "tarjetas", telActual, "movimientos")), { tipo: "canje", monto: 0, sellosAgregados: 0,
+        sellosAntes: c.sellos, sellosDespues: 0, staffUid: staff.uid, staffNombre: staff.nombre, fecha: serverTimestamp() });
+      tx.update(ref, { sellos: 0, canjes: (c.canjes || 0) + 1, actualizada: serverTimestamp() });
+    });
+    msg($("cliMsg"), "Premio canjeado. La tarjeta empieza de nuevo.", "ok"); toast("Premio canjeado");
+  } catch (e) { msg($("cliMsg"), "No se pudo canjear. Intentá de nuevo."); }
+  $("btnCanje").disabled = false;
+};
+
+// ---------- reporte ----------
+let filas = [];
+async function cargarReporte() {
+  $("tbClientes").innerHTML = '<tr><td colspan="5">Cargando…</td></tr>';
+  try {
+    const qs = await getDocs(query(collection(db, "tarjetas"), orderBy("actualizada", "desc"), limit(500)));
+    filas = qs.docs.map(d => d.data());
+    const ranking = [...filas].sort((a, b) => (b.canjes * LEALTAD.meta + b.sellos) - (a.canjes * LEALTAD.meta + a.sellos));
+    $("sClientes").textContent = filas.length;
+    $("sSellos").textContent = filas.reduce((t, c) => t + c.sellos, 0);
+    $("sCanjes").textContent = filas.reduce((t, c) => t + (c.canjes || 0), 0);
+    $("tbClientes").innerHTML = ranking.length ? ranking.map(c =>
+      `<tr><td>${esc(c.nombre)}</td><td style="font-family:monospace">${telBonito(c.telefono)}</td><td class="num">${c.sellos}/${LEALTAD.meta}</td><td class="num">${c.canjes || 0}</td><td>${fFecha(c.actualizada)}</td></tr>`).join("")
+      : '<tr><td colspan="5">Todavía no hay clientes registrados.</td></tr>';
+  } catch (e) { $("tbClientes").innerHTML = '<tr><td colspan="5">No se pudo cargar el reporte.</td></tr>'; }
+}
+$("btnCSV").onclick = () => {
+  const lineas = [["Nombre", "Telefono", "Sellos", "Premios canjeados", "Ultima visita"]]
+    .concat(filas.map(c => [c.nombre, c.telefono, c.sellos, c.canjes || 0, c.actualizada && c.actualizada.toDate ? c.actualizada.toDate().toISOString().slice(0, 10) : ""]));
+  const csv = "﻿" + lineas.map(l => l.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = `clientes-willys-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+};
+</script>
+</body>
+</html>
