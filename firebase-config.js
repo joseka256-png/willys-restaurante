@@ -6,12 +6,12 @@
 //  de Firestore (archivo firestore.rules).
 // =========================================================
 export const firebaseConfig = {
-  apiKey: "PEGAR_API_KEY",
-  authDomain: "PEGAR.firebaseapp.com",
-  projectId: "PEGAR_PROJECT_ID",
-  storageBucket: "PEGAR.appspot.com",
-  messagingSenderId: "PEGAR",
-  appId: "PEGAR"
+  apiKey: "AIzaSyCyqF4Qj73REw3ifx14a2HHI0J5ne4cjEQ",
+  authDomain: "willys-tarjeta.firebaseapp.com",
+  projectId: "willys-tarjeta",
+  storageBucket: "willys-tarjeta.firebasestorage.app",
+  messagingSenderId: "313188379080",
+  appId: "1:313188379080:web:ace4037a6770efd188f8fd"
 };
 
 // =========================================================
