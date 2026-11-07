@@ -35,7 +35,9 @@ service cloud.firestore {
 
       // Registro del cliente: siempre en 0 sellos
       allow create: if tel.matches('^[0-9]{8}$')
-        && request.resource.data.keys().hasOnly(['nombre','telefono','sellos','canjes','creada','actualizada'])
+        && request.resource.data.keys().hasOnly(['nombre','telefono','sellos','canjes','acepto','aceptoFecha','creada','actualizada'])
+        && request.resource.data.acepto == true
+        && request.resource.data.aceptoFecha == request.time
         && request.resource.data.telefono == tel
         && request.resource.data.nombre is string
         && request.resource.data.nombre.size() >= 3

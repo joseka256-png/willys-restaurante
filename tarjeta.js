@@ -91,11 +91,13 @@ $("btnConsultar").onclick = async () => {
 $("btnCrear").onclick = async () => {
   const nombre = $("cNombreInput").value.trim().replace(/\s+/g, " ");
   if (nombre.length < 3) return msg($("cMsg"), "Escribí tu nombre completo.");
+  if (!$("cAcepto").checked) return msg($("cMsg"), "Para crear la tarjeta tenés que aceptar el aviso de privacidad.");
   if (!telPendiente) return;
   $("btnCrear").disabled = true;
   try {
     await setDoc(doc(db, "tarjetas", telPendiente), {
       nombre: nombre.slice(0, 60), telefono: telPendiente, sellos: 0, canjes: 0,
+      acepto: true, aceptoFecha: serverTimestamp(),
       creada: serverTimestamp(), actualizada: serverTimestamp()
     });
     guardarTel(telPendiente); escuchar(telPendiente);
@@ -107,9 +109,11 @@ $("btnCrear").onclick = async () => {
   $("btnCrear").disabled = false;
 };
 
+$("verAviso").onclick = e => { e.preventDefault(); $("aviso").classList.toggle("show"); };
+
 $("btnSalir").onclick = () => {
   if (dejarDeEscuchar) dejarDeEscuchar();
-  guardarTel(null); $("cTel").value = ""; $("cNombreInput").value = "";
+  guardarTel(null); $("cTel").value = ""; $("cNombreInput").value = ""; $("cAcepto").checked = false;
   $("pasoNombre").style.display = "none"; pintar(null);
 };
 

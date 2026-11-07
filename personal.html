@@ -65,6 +65,8 @@
   .modal-box p{color:var(--gris);margin:8px 0 18px}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--negro);color:#fff;padding:14px 22px;border-radius:50px;font-weight:600;z-index:60;transition:.3s;max-width:92vw;text-align:center}
   .toast.show{transform:translateX(-50%) translateY(0)}
+  .respaldo{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--crema);border:1.5px solid var(--borde);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+  .respaldo.alerta{border-color:var(--naranja);background:#fff1e6}
   .hidden{display:none!important}
   @media(max-width:760px){.cliente{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.stat b{font-size:1.25rem}}
 </style>
@@ -108,6 +110,10 @@
             <div><label for="nNombre">No tiene tarjeta. Nombre del cliente:</label><input id="nNombre" placeholder="Nombre completo"></div>
             <button class="btn" id="btnCrearCli">Crear tarjeta</button>
           </div>
+          <label style="display:flex;gap:8px;align-items:flex-start;font-weight:500;font-size:.85rem;color:var(--gris);margin-top:10px;cursor:pointer">
+            <input type="checkbox" id="nAcepto" style="width:18px;height:18px;margin-top:2px;accent-color:var(--naranja)">
+            <span>Le expliqué al cliente que guardamos su nombre y teléfono solo para el programa de sellos, y <b>aceptó</b>.</span>
+          </label>
         </div>
       </div>
 
@@ -147,6 +153,14 @@
           <div class="stat"><b id="sSellos">–</b><small>Sellos activos</small></div>
           <div class="stat"><b id="sCanjes">–</b><small>Premios canjeados</small></div>
         </div>
+        <div class="respaldo" id="respaldoBox">
+          <div>
+            <b>Respaldo semanal</b>
+            <div id="respaldoTxt" style="font-size:.85rem;color:var(--gris)">Descargá una copia completa de todas las tarjetas y su historial.</div>
+          </div>
+          <button class="btn dark" id="btnRespaldo">Descargar respaldo completo</button>
+        </div>
+        <div class="msg" id="respaldoMsg" style="margin:-4px 0 12px"></div>
         <div class="row" style="justify-content:space-between;margin-bottom:10px">
           <h2 style="margin:0">Clientes frecuentes</h2>
           <button class="btn ghost" id="btnCSV">Descargar Excel (CSV)</button>
@@ -244,7 +258,7 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
   $("pCaja").classList.toggle("hidden", t.dataset.v !== "caja");
   $("pReporte").classList.toggle("hidden", t.dataset.v !== "reporte");
-  if (t.dataset.v === "reporte") cargarReporte();
+  if (t.dataset.v === "reporte") { cargarReporte(); pintarRespaldo(); }
 });
 
 // ---------- buscar cliente ----------
@@ -268,9 +282,10 @@ async function buscar() {
 $("btnCrearCli").onclick = async () => {
   const nombre = $("nNombre").value.trim().replace(/\s+/g, " ");
   if (nombre.length < 3) return msg($("bMsg"), "Escribí el nombre completo.");
+  if (!$("nAcepto").checked) return msg($("bMsg"), "Confirmá que el cliente aceptó el uso de sus datos.");
   try {
-    await setDoc(doc(db, "tarjetas", telActual), { nombre: nombre.slice(0, 60), telefono: telActual, sellos: 0, canjes: 0, creada: serverTimestamp(), actualizada: serverTimestamp() });
-    $("crearBox").classList.add("hidden"); $("nNombre").value = ""; msg($("bMsg"), "Tarjeta creada.", "ok");
+    await setDoc(doc(db, "tarjetas", telActual), { nombre: nombre.slice(0, 60), telefono: telActual, sellos: 0, canjes: 0, acepto: true, aceptoFecha: serverTimestamp(), creada: serverTimestamp(), actualizada: serverTimestamp() });
+    $("crearBox").classList.add("hidden"); $("nNombre").value = ""; $("nAcepto").checked = false; msg($("bMsg"), "Tarjeta creada.", "ok");
     abrirCliente(telActual);
   } catch (e) { msg($("bMsg"), "No se pudo crear la tarjeta."); }
 };
@@ -379,6 +394,43 @@ async function cargarReporte() {
       : '<tr><td colspan="5">Todavía no hay clientes registrados.</td></tr>';
   } catch (e) { $("tbClientes").innerHTML = '<tr><td colspan="5">No se pudo cargar el reporte.</td></tr>'; }
 }
+
+// ---------- respaldo completo ----------
+const KEY_RESP = "willys_ultimo_respaldo";
+function pintarRespaldo() {
+  let ult = null; try { ult = localStorage.getItem(KEY_RESP); } catch (e) {}
+  const box = $("respaldoBox"), txt = $("respaldoTxt");
+  if (!ult) { box.classList.add("alerta"); txt.textContent = "Todavía no se ha descargado ningún respaldo desde este equipo."; return; }
+  const dias = Math.floor((Date.now() - Number(ult)) / 86400000);
+  box.classList.toggle("alerta", dias >= 7);
+  txt.textContent = dias === 0 ? "Último respaldo: hoy." : `Último respaldo: hace ${dias} día${dias > 1 ? "s" : ""}.${dias >= 7 ? " Toca descargar uno nuevo." : ""}`;
+}
+const iso = v => v && v.toDate ? v.toDate().toISOString() : v;
+$("btnRespaldo").onclick = async () => {
+  $("btnRespaldo").disabled = true; msg($("respaldoMsg"), "Preparando respaldo…", "ok");
+  try {
+    const qs = await getDocs(collection(db, "tarjetas"));
+    const tarjetas = [];
+    let i = 0;
+    for (const d of qs.docs) {
+      const t = d.data();
+      const ms = await getDocs(query(collection(db, "tarjetas", d.id, "movimientos"), orderBy("fecha", "asc")));
+      tarjetas.push({ id: d.id, ...Object.fromEntries(Object.entries(t).map(([k, v]) => [k, iso(v)])),
+        movimientos: ms.docs.map(m => ({ id: m.id, ...Object.fromEntries(Object.entries(m.data()).map(([k, v]) => [k, iso(v)])) })) });
+      if (++i % 10 === 0) msg($("respaldoMsg"), `Preparando respaldo… ${i} de ${qs.size} clientes`, "ok");
+    }
+    const data = { negocio: "Willy's", proyecto: firebaseConfig.projectId, generado: new Date().toISOString(),
+      generadoPor: staff.nombre, totalClientes: tarjetas.length, tarjetas };
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+    a.download = `respaldo-willys-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+    try { localStorage.setItem(KEY_RESP, String(Date.now())); } catch (e) {}
+    msg($("respaldoMsg"), `Respaldo descargado: ${tarjetas.length} clientes. Guardalo en un lugar seguro (Drive o correo).`, "ok");
+    pintarRespaldo();
+  } catch (e) { msg($("respaldoMsg"), "No se pudo generar el respaldo. Intentá de nuevo."); }
+  $("btnRespaldo").disabled = false;
+};
+
 $("btnCSV").onclick = () => {
   const lineas = [["Nombre", "Telefono", "Sellos", "Premios canjeados", "Ultima visita"]]
     .concat(filas.map(c => [c.nombre, c.telefono, c.sellos, c.canjes || 0, c.actualizada && c.actualizada.toDate ? c.actualizada.toDate().toISOString().slice(0, 10) : ""]));

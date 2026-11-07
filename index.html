@@ -179,6 +179,11 @@
   .msg.err{color:#d33}.msg.ok{color:#1a9a4b}
   .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(120px);background:var(--negro);color:#fff;padding:14px 22px;border-radius:50px;font-weight:600;z-index:120;transition:.35s;box-shadow:0 10px 30px rgba(0,0,0,.3)}
   .toast.show{transform:translateX(-50%) translateY(0)}
+  .acepto{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--gris);margin:4px 0 12px;cursor:pointer}
+  .acepto input{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--naranja)}
+  .acepto a{color:var(--naranja);text-decoration:underline}
+  .aviso{display:none;background:var(--crema);border:1px solid var(--borde);border-radius:14px;padding:14px 16px;font-size:.8rem;color:var(--gris);margin-bottom:12px;max-height:260px;overflow:auto}
+  .aviso.show{display:block}.aviso p{margin-top:6px}.aviso b{color:var(--negro)}
   @media(max-width:900px){.lealtad{grid-template-columns:1fr}}
 
   @media(max-width:900px){
@@ -272,6 +277,16 @@
           <div class="campo"><label for="cTel">Tu teléfono</label><input id="cTel" placeholder="Ej: 8888-8888" inputmode="tel" autocomplete="tel"></div>
           <div id="pasoNombre" style="display:none">
             <div class="campo"><label for="cNombreInput">Nombre completo</label><input id="cNombreInput" placeholder="Ej: María Rodríguez" autocomplete="name"></div>
+            <label class="acepto"><input type="checkbox" id="cAcepto"> <span>Acepto que Willy's guarde mi nombre y teléfono para el programa de cliente frecuente, según el <a href="#" id="verAviso">aviso de privacidad</a>.</span></label>
+            <div class="aviso" id="aviso">
+              <b>Aviso de privacidad — Tarjeta Willy's</b>
+              <p><b>Responsable:</b> Willy's (WhatsApp 7169-7874 · willys.since2022@gmail.com). Soporte técnico: ISCR Tech (iscrtech.com).</p>
+              <p><b>Datos que guardamos:</b> tu nombre, tu número de teléfono, tus sellos, premios canjeados y la fecha y monto de las compras registradas en caja.</p>
+              <p><b>Para qué:</b> únicamente para administrar el programa de cliente frecuente. No vendemos ni compartimos tus datos con terceros ni los usamos para publicidad.</p>
+              <p><b>Dónde se guardan:</b> en la base de datos de Google Firebase, protegida con reglas de seguridad. Solo el personal autorizado de Willy's puede ver la lista de clientes.</p>
+              <p><b>Tus derechos:</b> podés pedir ver, corregir o eliminar tus datos cuando quieras, escribiendo al WhatsApp 7169-7874 o al correo willys.since2022@gmail.com. Respondemos en un plazo máximo de 5 días hábiles.</p>
+              <p>Ley N.° 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales.</p>
+            </div>
             <button class="btn" id="btnCrear" style="margin-bottom:10px">Crear mi tarjeta</button>
           </div>
           <div class="msg" id="cMsg"></div>
